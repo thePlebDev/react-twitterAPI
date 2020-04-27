@@ -1,0 +1,36 @@
+- so The first thing I am going to make is a responsive navBar for our app
+
+DESIGN FOR THE NAV BAR:
+-so I might just go vertical for the navBar . I am just going to go with a simple vertical navBar right now
+- actually that could be way too much for me right now. How about I just do a simple responsive navigation bar and then we can go from
+there
+
+- the navBar just seems like it is just a normal bunch of takes, with a hanburger pic and then you put a function that gets fired from
+click the burger pic to open the nav. I wiil try to create that function with React hooks.
+-we need to link font awesome for the burger pic. I will add it to the main html file
+- so now we have to add the media queries for when the screen changes sizes.
+
+- when the screen is less than 600 pixels wide, hide all links except for the first one(home). shoe the link that contains should open
+and close the topnav(.icon)
+
+- ok so I need to findout what the css :not thing is doing and what the :firstchild is doing
+- so the :not() prevents specific items from being selected. so in ours it is saying select every a tag in the topnav class that isnt the
+first child and make is display none.
+
+- ok so we need to use react hooks to add and take away a class and we need to do it with hooks.
+
+- to make the things show or not I could use conditional rendering. that would work nicely.
+- I would do, if this is false show this, when the button is clicked make true and add this class
+- I found a tut on youtube that is more modern, so I am going to go with that
+
+- right now I am reading about the proper way to reference dom nodes in react. I think I just want conditional rendering. I want to check
+the state if the state is false render with what it has now if the state is true, render with the new thing
+
+- so right now he is making an animation with key frames, I need to read wtf key frames are
+
+KEYFRAMES:
+-they are for animations that allow elements to gradually change from one style to another
+- ok so now we know where to do this
+
+
+- so now I am going to create a parralax effect. and try to make a cool landing page that all of those trendy sites have
