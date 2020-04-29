@@ -1,4 +1,5 @@
 import React,{ useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import './index.css'
 
@@ -22,15 +23,21 @@ const NavBar = ()=>{
         <h2>Analytics</h2>
       </div>
       <ul className={state?'nav-links': 'nav-links nav-active'} >
-        <li >
-            <a href="/">Home</a>
-        </li>
-        <li>
-            <a href="/">About</a>
-        </li>
-        <li>
-            <a href="/">Analytics</a>
-        </li>
+        <Link to="/">
+          <li >
+            Home
+          </li>
+        </Link>
+        <Link to="/about">
+          <li >
+            About
+          </li>
+        </Link>
+        <Link to="/analytics">
+          <li >
+            Analytics
+          </li>
+        </Link>
       </ul>
       <div className="burger" onClick={()=>show()}>
         <div className={state?"line1": "toggle1 line1"}></div>

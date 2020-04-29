@@ -1,0 +1,17 @@
+.button-container{
+  border:1px solid red;
+  text-align: center;
+  padding: 10px;
+}
+
+button{
+width: 30%;
+height: 160px;
+border-radius: 5px;
+border: 1px solid black;
+margin-top: 20px;
+outline: none;
+cursor: pointer;
+
+
+}
