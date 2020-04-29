@@ -34,3 +34,210 @@ KEYFRAMES:
 
 
 - so now I am going to create a parralax effect. and try to make a cool landing page that all of those trendy sites have
+
+- so now that I have the basic design down I nedd to work out the Twitter api
+
+TWITTER API
+- so I will be using the standard api and the authentication that it needs is OAuth 1.0a
+
+X 1) Apply and receive approval for a Twitter developer account
+X 2) Create a Twitter developer account
+X 3) Generate your app's API keys and user's access tokens
+X 4) Generate your app's bearer token
+5) Apply and recieve access yo the desired API
+6) Find documentation, libraries and other things that are needed to make a request
+
+
+- unfortunately it looks like we only get 15 requests every 15 minutes on the standard api
+
+
+OAUTH1.0a AUTHENTICATION:
+- the docs says that if we are not familiar with the concepts of HMAC-SHA1 and percent encoding we should look into post man
+- so postman is an API client that lets you build and send REST API requests. it is a REST client that allows us to make requests
+to APIs inside of a user interface, this can be helpful when you are working with a new endpoint
+- cool, so I guess I already have Postman downloaded
+- ok screw that noise, that is just confusing me more, so nope
+- so it definitely seems like my biggest hurdle is going to be authentication.
+- you have to sign each API request by passing several genreated keys and tokens in an authorized header
+
+-it tells us to encrypt the keys but I dont't really know what that means
+- so since we have an a twitter developer account app, you can make API request on behalf of any Twitter account as long as that user
+authenticates the app
+- we send the keys and tokens in an authorization header.
+- our api key and secret are like the username and password that represents our twitter developer app when making API requests.
+
+- when creating a signature, you need a set of access tokens that represent the user that you are going to make a request on behalf of
+- so twitter doesn't recommend creating a signature from scratch.
+- then it shows all the generated tokens passed in an authorization header and there are like 7, seems like way too many to handel by
+myself, I better make some of the tools do the work.
+- so before I read more on the tools of how to create the requests with post man and insomnia. I am going to look read up on the
+authentication more.
+
+- to perform actions on behalf of another user, you need to obtain their access tokens, the user will have to grant our app permission to
+use their tokens, this is just done through the user signing in to twitter
+actually before I get into this api I need to see how you create react routing
+
+- so I guess routing in React is done with React router.
+- Now I have installed React Router, I need to see how it functions.
+
+FIRST OF ALL WHAT THE HECK IS REACT ROUTER??
+- well we will be using react router to create a single page application
+- so it looks like we have to like everything with router. I think I will have to put all the things into the navBar component in order to
+get it to render properly, actually that just might be for the links. I think I can use a switch in the App component to get things
+to work properly
+
+BACK TO AUTHENTICATION:
+ - make sure not to commit the API keys to github, use an enviroment varible, or make sure to add the file to the .gitignore file
+
+ step 1) Obtaining a request token:
+ - to obtain a request token we must send a signed message to Post oauth/request_token.
+ - so I think I should look into what a signed message is. so if we arent familiar with HMAC-SHA1 and percent encoding, twitter recommends
+ using some tool that really simplify the authentication process.
+ - so when we get the user to sign into their account, twitter will grant us a set of access tokens(oauth_token and oauth_token_secret)
+ these can then be used to make OAuth 1.0a requests. once we have those keys and tokens, we can create a signature from scratch but
+ twitter says that it can be hard and gives us tools to do so
+
+ -so I found an article on how to deal with all this twitter authentication by a guy called jeremy lenz, so that is awesome
+ - below are the steps that he has laid out.
+
+ 1) Send a signed post request to api.twitter.com/oauth/request/request_token. this request contains a callback_url, which twitter will
+ use  later, if everything goes ok, Twitter will respond with a token and token secret.
+
+ 2)At this point, the login with twitter button becomes available. When clicked the user is directed to api.twitter.com/oauth/authenticate
+ and the token from Step 1 is included in the URL parameters
+
+ 3) Now the twitter login screen will pop up and then the user can sign in if it hasnt already authorized the app
+
+ 4)once the user is logged in twitter will redirect the user to the callback_url. the URL parameters Twitter send will contain the same
+ oauth_token I got back in Step 2 and an oauth_verifier which I can use in the next step.
+
+ 5) when you get the response back, you must send another signed post request, but this time to api.twitter.com/oauth/access_token. The
+ request will contian the oauth_verifier I obtained in the previous step.
+
+ 6) finally I get an oauth_token_secret  in response. this is the green light. I should be able to use the oauth_toekn_secret for
+ future twitter API reqeust without having to do this whole thing again
+
+ - on top of this there are three things that need to be added.
+ 1) all parameters must be percent encoded. this is a type of encoding for the url
+ 2)all requests that are sent to twitter must be signed
+ 3) If something goes wrong, the twitter error response are kinda useless.
+ - so he says that he was able to pull URL params using React Router location props. So I guess I will read that post and then try to
+ dive into the docs again
+
+
+
+ -so I should create a button that sends a post request to the oauth/reqeust_token. so first create a button
+ - ok so I have to make a fetch request, which I think returns a promise which means that I think I should use an async function.
+ - ya, so the fetch method takes one mandatory argument, the path to the resource you want to fetch(). it returns a promise that resolves
+ to the response to that request, whether it is successful or not.
+ - ok so now I think we should read up on async functions.
+
+ -so async functions operate separate from the rest of the code via the event loop. the event loop is responsible for processing
+ code. The event loop has one job, it looks at the stack and if the stack is empty then it pusheswhatever is in the task que to
+ the stack and then the stack runs that. if someone says don't block the stack, what they are saying is, dont put slow code on the stack
+ because the website needs to have an empty stack inorder to rerender that page
+
+ - so the await keyword is used to pause the function and wait until that promise is resolved or rejected.
+ -so our async function now returns a promise.
+ - so I think that in my function I will have the asyn function fire and then using the data that is returned I will set the state with it
+ - our async function with await will not do anything until the promise fulfils
+ - ok so now back how to make the call to the twitter API
+
+
+ - so we need to send a signed post request to a twitter url. so WTF does it mean to send SIGNED post
+ - so first we deterime the HTTP method we know that this is POST, good there
+ - so then we get the base url, which we have got, minus any query strings or hash parameters
+
+ - then we have gathering all of the parameters included in the request. there are two such locations for these additional parameters
+ the URL( as part of the query string) and the request body. not really sure how to do either
+ - An HTTP request has parameters that are URL encoded, but you should collect the raw values. In addition to the request parameters
+ every oauth_* parameter needs to be included in the signature, so collec those too. there are 7 parameters needed for making an
+ authorization request.
+
+ - of the seven the only two I am not sure about is the oauth_consumer_key and the oauth_token.
+ oauth_consumer_key: that is the Twitter API key
+ oauth_token: the access token that we got from twitter
+
+ - then all those values need to be percent encoded into a single string, which will be used later on.The process to build the string
+ is very specific
+
+ 1)Percent encode every key and value that will be signed
+ 2) sort the list of parameters alphabetically by the encoded key
+ 3) for each key/value pair:
+ 4)Append the encoded key to the output string
+ 5) Append the '=' charachter to the output string
+ 6) Append the encoded value to the output string
+ 7)If there are more key/value pairs remaining, append a "&" character to the output string
+ - ok so IDK what the heck these key value pairs are and where the are suppose to go, is this a normal thing in HTTP requests. ok so
+ they seem to be just normal key value pairs that are connected by an = instead of a :
+
+ - so I need to figure out what the oauth_token is and where to get it, I then need to work out the encoding and then I need to figure
+ out how to send the request
+ - so the oauth_token is an access token an user-specific credentials used to authenticate OAuth 1.0a API request. They specify
+ the Twitter account the request is made on behalf of
+
+ -so to do something on behalf of a user, you need to obtain their access tokens. These tokens specify the twitter account the request is
+ made on behalf of, so for you to obtain these they will need to first grant you access. You obtain these access tokens through the
+ 3-legged OAuth flow, which allows your application to obtain an access token and access token and access token secret by redirecting a
+ user to Twitter and having them authorize your application.
+
+ - before we get started we need to check the application permissions and know the consumer keys and callback URL.
+ - so the callback url is just local host, the consumer keys are just our personal API and API secret key.
+
+ THE 3-LEGGED OAUTH PROCESS
+ 1) create a request for a consumer application to obtain a request token
+ 2) Have the user authenticate and send the consumer application a request token
+ 3) Convert the request token into a usable user access token.
+
+
+ WALKTHROUGH STEPS FOR 3-LEGGED OAUTH PROCESS:
+ 1) POST oauth/reqeust_token
+ -create a request for a consumer application to obtain a request token
+ - the only unique parameter in this request is oauth_callback, which must be URL encoded version of the URL you wish your user to
+ be redirected to when they complete step 2
+
+ - so we send a post request to https://api.twitter.com/oauth/request_token
+ - in the parameters of the section of the url we need to send the callback_url, which still needs to be encoded, if I am remembering
+ correctly
+ - so we make a post request to the base url, the reqeust doesnt need to have a body but it does have an authorization header
+
+ Our request will include
+ -oauth_callback = "fdasf" this has to be encoded(look into this)
+ -oauth_consumer_key="our api key"
+ -if our response gets anything other the 200 as a response code, then it has failed
+ - so an authorization request needs an authorization header
+ - so the blog post that I am reading says that step one is to send a SIGNED post request to the base url with a callback function
+ - so I guess we will try to do that first
+
+ - so we have the base url and the callback_url, now we just need to figure out how to send a signed request
+- ok  so the very first thing our app must do is create a signed request token by sending a signed message to POST oauth/reqeust_token
+-so we need to create a signature, easy stuff, lets go!!!!!
+- we figure the signature out, we are basically done.
+
+- so we got the base url and the method
+- so now we need to collect the parameters
+
+- we have include_entities,we have the oauth_consumer_key
+oauth_nonce: this is a unique token that our application should generate for each unique reqeust. Twitter will use this value to determine
+whether a reqeust has been submitted multiple times. The value of this request was generated by base 64 encoding 32 bytes of random data,
+and stripping out all the non-word characters buy any approach whihc produces a relatively random alphanumeric string should be ok here.
+- so basically just a long randomized string.
+- we have the oauth_signature_method
+-oauth_timestamp: is a very specific time stamp.
+- so all the parameters I am looking at are for an authorized request but first we just need to make a reqeust, inorder to get the
+api key in order to make an authorized request.
+
+-so I guess we are going to use twit, that seems like the best bet for handeling stuff on twitter
+- so first we are going to install it, now that I have installed it, I have to figure out how to use it
+- so we create the a new twit object that handels the Oauth for us, that speeds things up a little. That object can then be used to make
+requests on behalf of our app
+- so then we use twit to search for the tweet with the necessary data.
+
+
+
+- SCREW THIS TWITTER API AND TWIT AND ALL OF IT! WE ARE USING A COVID-19 API.
+
+- ok well now I am going back to the twitter API I really just want to finish something that I started.
+-so I will try another twitter npm
+
+-so since I am getting a CORS error, I found some articles on how Cors work, the notes to follow are on CORS

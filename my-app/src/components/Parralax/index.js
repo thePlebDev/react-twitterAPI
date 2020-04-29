@@ -10,7 +10,7 @@ const Parallax = () =>{
     <div className="container">
         <div className='pimg1'>
           <div className='ptext'>
-            <span class="border">
+            <span className="border">
               Twitter Analytics
             </span>
           </div>

@@ -1,4 +1,5 @@
 import React from 'react'
+import Twitter from 'twitter'
 
 import './index.css'
 
@@ -6,9 +7,26 @@ import './index.css'
 
 const API = () =>{
 
-const clicked = async ()=>{
+
+  const client = new Twitter({
+    consumer_key: "",
+    consumer_secret:"",
+    access_token: "",
+    access_token_secret:"",
+
+  })
+
+const clicked = ()=>{
+
+  client.get('favorites/list', function(error, tweets, response) {
+  if(error) throw error;
+  console.log(tweets);  // The favorites.
+  console.log(response);  // Raw response object.
+});
+
   //do something liek this
-  //fetch(url,postData).then(do whatever)
+  //let response = await fetch(url,postData)
+  //console.log(response)
 }
   return(
     <div>
